@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Love ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+/* GLOBAL BACKGROUND */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(#ffd6e9, #ffbcd4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: none;
+}
+
+canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+}
+
+/* SPARKLE TRAIL */
+.sparkle {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: sparkleAnim 0.6s linear forwards;
+    box-shadow: 0 0 6px white;
+}
+@keyframes sparkleAnim {
+    to {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+.container {
+    width: 90%;
+    max-width: 430px;
+    background: rgba(255, 255, 255, 0.90);
+    padding: 35px;
+    text-align: center;
+    border-radius: 28px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+    position: absolute;
+    z-index: 10;
+}
+
+.hidden { display: none; }
+
+.title {
+    font-size: 3rem;
+    font-family: "Parisienne", cursive;
+    color: #ff2d6b;
+}
+
+.subtitle {
+    color: #333;
+    margin-bottom: 20px;
+    margin-top: 5px;
+}
+
+/* NAME INPUT */
+.name-input {
+    padding: 12px;
+    width: 85%;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: 2px solid #ff2d6b;
+    text-align: center;
+    outline: none;
+}
+
+/* BUTTON */
+.btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #ff2d6b, #c40052);
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: .2s;
+}
+.btn:hover {
+    transform: scale(1.05);
+}
+
+/* UPLOAD BOX */
+.upload-box {
+    width: calc(100% - 40px);
+    padding: 30px;
+    border: 2.5px dashed #ff6c9f;
+    border-radius: 20px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.7);
+    transition: .3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+.upload-box:hover {
+    background: rgba(255,255,255,0.9);
+    transform: scale(1.02);
+}
+
+.icon {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    margin: 0;
+    color: #ff2d6b;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* YES NO BUTTONS */
+#yesBtn, #noBtn {
+    width: 48%;
+    padding: 13px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+#yesBtn { 
+    background: linear-gradient(45deg, #ff2d6b, #c40052);
+    color: white;
+}
+#yesBtn:hover { transform: scale(1.1); }
+
+#noBtn { 
+    background: #444;
+    color: white;
+    position: relative;
+}
+
+/* SLIDER FIX */
+.slider {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 20px;
+    margin-top: 10px;
+    background: white;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#slides {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slide {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 20px;
+    position: absolute;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+.slide.active {
+    opacity: 1;
+}
+
+/* TYPEWRITER TEXT */
+#quote {
+    margin-top: 20px;
+    font-family: "Parisienne", cursive;
+    font-size: 2rem;
+    color: #c40052;
+    min-height: 40px;
+    letter-spacing: 1px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ❤️ MUSIC -->
+<audio id="bgMusic" src="https://cdn.pixabay.com/audio/2024/01/11/audio_7bfa8b31a0.mp3" loop></audio>
+
+<!-- ❤️ HEART BACKGROUND -->
+<canvas id="heartCanvas"></canvas>
+
+<!-- PAGE 1 -->
+<div class="container" id="namePage">
+    <h1 class="title">Welcome ❤️</h1>
+    <p class="subtitle">Sabse pehle apna ya partner ka naam batao 😊</p>
+    <input type="text" id="userName" class="name-input" placeholder="Enter name...">
+    <button class="btn" id="saveNameBtn">Continue ❤️</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="container hidden" id="uploadPage">
+    <h1 class="title">Hey <span id="userNameShow">Love</span> ✨</h1>
+    <p class="subtitle">Hamari sabse pyari yaadein choose karo ❤️</p>
+
+    <label class="upload-box">
+        <input type="file" id="imgUpload" hidden multiple accept="image/*">
+        <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" class="icon">
+        <p class="upload-text">Tap to Select Photos</p>
+    </label>
+
+    <p id="count" class="count"></p>
+    <button class="btn" id="startBtn">Start Magic ❤️</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="container hidden" id="askPage">
+    <h1 class="title"><span id="loverName"></span> ❤️</h1>
+    <p class="subtitle" id="askLine"></p>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+        <button id="yesBtn">Yes 😍</button>
+        <button id="noBtn">No 😢</button>
+    </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="container hidden" id="sliderPage">
+    <h1 class="title">You're Mine ❤️</h1>
+    <div class="slider">
+        <div id="slides"></div>
+    </div>
+    <p id="quote"></p>
+</div>
+
+<script>
+
+/* 🎶 Auto Music Fade-in */
+const bgMusic = document.getElementById("bgMusic");
+function playMusic() {
+    bgMusic.volume = 0;
+    bgMusic.play();
+    let v = 0;
+    const fade = setInterval(() => {
+        v += 0.01;
+        if (v >= 0.5) clearInterval(fade);
+        bgMusic.volume = v;
+    }, 80);
+}
+
+/* ✨ Sparkle Trail Cursor */
+document.addEventListener("mousemove", (e) => {
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.style.left = e.pageX + "px";
+    s.style.top = e.pageY + "px";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 600);
+});
+
+/* ❤️ HEART BACKGROUND */
+const c = document.getElementById("heartCanvas");
+const ctx = c.getContext("2d");
+c.width = innerWidth;
+c.height = innerHeight;
+
+let hearts = [];
+function Heart(x, y, size, speed) {
+    this.x=x; this.y=y; this.size=size; this.speed=speed;
+}
+
+function drawHeart(x,y,size){
+    ctx.fillStyle="rgba(255,0,90,0.4)";
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.bezierCurveTo(x-size,y-size,x-size*2,y+size/2,x,y+size);
+    ctx.bezierCurveTo(x+size*2,y+size/2,x+size,y-size,x,y);
+    ctx.fill();
+}
+
+function animateHearts(){
+    ctx.clearRect(0,0,c.width,c.height);
+
+    if(Math.random()<0.1){
+        hearts.push(new Heart(Math.random()*c.width,c.height+20,Math.random()*6+3,Math.random()+0.5));
+    }
+
+    hearts.forEach(h=>{
+        h.y-=h.speed;
+        drawHeart(h.x,h.y,h.size);
+    });
+
+    hearts=hearts.filter(h=>h.y>-20);
+    requestAnimationFrame(animateHearts);
+}
+animateHearts();
+
+/* MAIN LOGIC */
+let userName = "";
+let files = [];
+
+/* PAGE ELEMENTS */
+const namePage = document.getElementById("namePage");
+const uploadPage = document.getElementById("uploadPage");
+const askPage = document.getElementById("askPage");
+const sliderPage = document.getElementById("sliderPage");
+
+/* SAVE NAME */
+document.getElementById("saveNameBtn").onclick = () => {
+    userName = document.getElementById("userName").value.trim();
+    if(userName === "") {
+        alert("Naam toh likho jaan ❤️");
+        return;
+    }
+    document.getElementById("userNameShow").innerText = userName;
+    namePage.classList.add("hidden");
+    uploadPage.classList.remove("hidden");
+    playMusic();
+};
+
+/* UPLOAD PHOTOS — IMGBB ONLY ADDED (NO OTHER CHANGE) */
+document.getElementById("imgUpload").onchange = async (e) => {
+    const selectedFiles = [...e.target.files];
+    const API_KEY = "696ae180515a10ddca29b09a4a656acd";  
+
+    files = [];
+    document.getElementById("count").innerText = "Uploading... ❤️ Please wait";
+
+    for (let file of selectedFiles) {
+        let formData = new FormData();
+        formData.append("image", file);
+
+        let upload = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
+            method: "POST",
+            body: formData
+        });
+
+        let result = await upload.json();
+        if (result.success) {
+            files.push(result.data.url);
+        }
+    }
+
+    document.getElementById("count").innerText = `${files.length} Photos Uploaded ❤️`;
+};
+
+/* START MAGIC */
+document.getElementById("startBtn").onclick = () => {
+    if(files.length === 0) {
+        alert("Photos select karo baby ❤️");
+        return;
+    }
+    uploadPage.classList.add("hidden");
+    askPage.classList.remove("hidden");
+
+    document.getElementById("loverName").innerText = userName;
+    document.getElementById("askLine").innerText =
+        `"Tumhari muskurahat meri zindagi hai ${userName}..."`;
+};
+
+/* NO BUTTON DODGE */
+const noBtn = document.getElementById("noBtn");
+noBtn.onmouseover = () => {
+    noBtn.style.position = "relative";
+    noBtn.style.left = (Math.random()*120 - 60) + "px";
+    noBtn.style.top = (Math.random()*120 - 60) + "px";
+};
+
+/* YES BUTTON → GO TO SLIDER */
+document.getElementById("yesBtn").onclick = () => {
+    askPage.classList.add("hidden");
+    sliderPage.classList.remove("hidden");
+
+    createHeartExplosion();
+
+    let slidesDiv = document.getElementById("slides");
+    files.forEach((file, i) => {
+        let img = document.createElement("img");
+        img.src = file; // ONLY CHANGE FOR SLIDER → IMGBB URL
+        img.className = "slide";
+        if(i===0) img.classList.add("active");
+        slidesDiv.appendChild(img);
+    });
+
+    startSlider();
+};
+
+/* HEART EXPLOSION */
+function createHeartExplosion() {
+    for(let i=0; i<80; i++){
+        const h = document.createElement("div");
+        h.innerHTML = "❤️";
+        h.style.position = "fixed";
+        h.style.fontSize = (Math.random()*25+10) + "px";
+        h.style.left = (window.innerWidth/2) + "px";
+        h.style.top = (window.innerHeight/2) + "px";
+        h.style.transition = "1s";
+        h.style.opacity = 1;
+        document.body.appendChild(h);
+
+        setTimeout(() => {
+            h.style.left = (Math.random()*window.innerWidth) + "px";
+            h.style.top = (Math.random()*window.innerHeight) + "px";
+            h.style.opacity = 0;
+        }, 50);
+
+        setTimeout(() => h.remove(), 1200);
+    }
+}
+
+/* SLIDER + TYPEWRITER */
+function startSlider() {
+    let imgs = document.querySelectorAll(".slide");
+    let i = 0;
+
+    const quotes = [
+        `${userName}, you are my everything ❤️`,
+        `Tum mile, zindagi mil gayi ❤️`,
+        `${userName}, tum meri khushi ho ❤️`,
+        `Har pal sirf ${userName} ki yaad...`,
+        `Dil karta hai tumhe hi dekhta rahu ❤️`
+    ];
+
+    function typeWriter(text) {
+        let i = 0;
+        document.getElementById("quote").innerText = "";
+        const typer = setInterval(() => {
+            document.getElementById("quote").innerText += text.charAt(i);
+            i++;
+            if(i >= text.length) clearInterval(typer);
+        }, 80);
+    }
+
+    setInterval(() => {
+        imgs[i].classList.remove("active");
+        i = (i + 1) % imgs.length;
+        imgs[i].classList.add("active");
+
+        typeWriter(quotes[Math.floor(Math.random()*quotes.length)]);
+    }, 3500);
+}
+</script>
+
+</body>
+</html>
